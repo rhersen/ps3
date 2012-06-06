@@ -5,7 +5,7 @@ extern int process_count;
 struct process_status {
   struct process_status *next_process;
   int pid, ppid;
-  unsigned char comm[18];
+  char comm[18];
   char state;
   unsigned cpu;
   unsigned cpuhist[RESOLUTION];
@@ -69,5 +69,5 @@ struct process_status {
 };
 
 struct process_status *read_processes_status(void);
-void free_processes_status(struct process_status *this);
+void free_processes_status(struct process_status *);
 void diff(struct process_status *newp, struct process_status *oldp);

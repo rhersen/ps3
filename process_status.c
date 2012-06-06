@@ -11,7 +11,7 @@ int process_count;
 
 static struct process_status *new_process_status(void) {
   struct process_status empty = { 0 };
-  struct process_status *r = malloc(sizeof(struct process_status));
+  struct process_status *r = (process_status *) malloc(sizeof(struct process_status));
   *r = empty;
   return r;
 }
@@ -96,11 +96,11 @@ struct process_status *read_processes_status(void) {
   return r;
 }
 
-void free_processes_status(struct process_status *this) {
-  while (this) {
-    struct process_status *next = this->next_process;
-    free(this);
-    this = next;
+void free_processes_status(struct process_status *thiz) {
+  while (thiz) {
+    struct process_status *next = thiz->next_process;
+    free(thiz);
+    thiz = next;
   }
 }
 

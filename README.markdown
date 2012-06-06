@@ -14,8 +14,10 @@ with interactive rotation, zooming and scaling</ul>
 <li>OpenGL
 <li>SDL 1.2.5 or newer
 <li>libpng
-
 </ul>
+
+On Ubuntu 12.04,
+installing libglu1-mesa-dev and libsdl1.2-dev seems to be enough.
 
 For smooth rendering, you need a Geforce or Radeon graphics card.
 

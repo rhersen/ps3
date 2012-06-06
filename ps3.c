@@ -308,7 +308,7 @@ int main(int argc, char *argv[]) {
 
       {
 	int namelen = strlen(p->comm);
-	unsigned char pid[6];
+	char pid[6];
 	int pidlen;
 	GLfloat thickness = 0.5 + 1.0 * p->cpu / 100;
 	GLfloat xl = -thickness;

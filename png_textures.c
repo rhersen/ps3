@@ -8,7 +8,7 @@
 
 static struct pngtx *new_pngtx(void) {
   struct pngtx empty = { 0, 1, 1 };
-  struct pngtx *r = malloc(sizeof(struct pngtx));
+  struct pngtx *r = (pngtx *) malloc(sizeof(struct pngtx));
   *r = empty;
   return r;
 }
@@ -77,7 +77,7 @@ struct pngtx *read_png(const char *pngfile) {
 
 static void set_min_filter(void) {
 #ifdef GL_GENERATE_MIPMAP_SGIS
-  if (strstr(glGetString(GL_EXTENSIONS), "GL_SGIS_generate_mipmap")) {
+    if (strstr((const char*) glGetString(GL_EXTENSIONS), "GL_SGIS_generate_mipmap")) {
     glTexParameteri(GL_TEXTURE_2D,
 		    GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
@@ -93,7 +93,7 @@ static void set_min_filter(void) {
 GLuint *read_font(void) {
   unsigned char i;
   struct pngtx *tx;
-  GLuint *r = malloc('z' * sizeof(GLuint));
+  GLuint *r = (GLuint*) malloc('z' * sizeof(GLuint));
   glGenTextures('z', r);
 
   for (i = ' '; i <= 'z'; i++) {
