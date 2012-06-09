@@ -9,13 +9,6 @@
 
 int process_count;
 
-static struct process_status *new_process_status(void) {
-  struct process_status empty = { 0 };
-  struct process_status *r = (process_status *) malloc(sizeof(struct process_status));
-  *r = empty;
-  return r;
-}
-
 static void remove_parens(char *s) {
   if (s[0] == '(') {
     strcpy(s, s + 1);
@@ -30,9 +23,40 @@ static void remove_parens(char *s) {
   }
 }
 
-struct process_status *read_processes_status(void) {
-  struct process_status *r = 0;
-  struct process_status *p = 0;
+process_status::process_status(FILE* statfile) :
+next_process(), cpu(), cpuhist(), histidx()
+{
+    int assigned = fscanf(statfile, "%d %s "
+                          "%c "
+                          "%d %d %d %d %d "
+                          "%lu "
+                          "%lu %lu %lu %lu "
+                          "%Lu %Lu %Lu %Lu "  /* utime stime cutime cstime */
+                          "%ld %ld %ld %ld "
+                          "%Lu "  /* start_time */
+                          "%lu "
+                          "%ld ",
+                          &pid, comm,
+                          &state,
+                          &ppid, &pgrp, &session, &tty, &tpgid,
+                          &flags,
+                          &min_flt, &cmin_flt, &maj_flt, &cmaj_flt,
+                          &utime, &stime, &cutime, &cstime,
+                          &priority, &nice, &timeout, &it_real_value,
+                          &start_time,
+                          &vsize,
+                          &rss);
+
+    if (assigned != 24) {
+        throw "could not read statfile";
+    }
+
+    remove_parens(comm);
+}
+
+process_status *read_processes_status(void) {
+  process_status *r = 0;
+  process_status *p = 0;
   DIR *proc = opendir("/proc");
   struct dirent *psdir;
 
@@ -49,7 +73,7 @@ struct process_status *read_processes_status(void) {
     }
 
     if (statfile) {
-      struct process_status *newp = new_process_status();
+      process_status *newp = new process_status(statfile);
 
       process_count++;
 
@@ -61,32 +85,6 @@ struct process_status *read_processes_status(void) {
 
       p = newp;
 
-      if (fscanf(statfile, "%d %s "
-		 "%c "
-		 "%d %d %d %d %d "
-		 "%lu "
-		 "%lu %lu %lu %lu "
-		 "%Lu %Lu %Lu %Lu "  /* utime stime cutime cstime */
-		 "%ld %ld %ld %ld "
-		 "%Lu "  /* start_time */
-		 "%lu "
-		 "%ld ",
-		 &p->pid, p->comm,
-		 &p->state,
-		 &p->ppid, &p->pgrp, &p->session, &p->tty, &p->tpgid,
-		 &p->flags,
-		 &p->min_flt, &p->cmin_flt, &p->maj_flt, &p->cmaj_flt,
-		 &p->utime, &p->stime, &p->cutime, &p->cstime,
-		 &p->priority, &p->nice, &p->timeout, &p->it_real_value,
-		 &p->start_time,
-		 &p->vsize,
-		 &p->rss) != 24) {
-	fprintf(stderr, "can't read %s\n", statname);
-	exit(1);
-      }
-
-      remove_parens(p->comm);
-
       fclose(statfile);
     }
   }
@@ -96,15 +94,15 @@ struct process_status *read_processes_status(void) {
   return r;
 }
 
-void free_processes_status(struct process_status *thiz) {
+void free_processes_status(process_status *thiz) {
   while (thiz) {
-    struct process_status *next = thiz->next_process;
+    process_status *next = thiz->next_process;
     free(thiz);
     thiz = next;
   }
 }
 
-void diff(struct process_status *newp, struct process_status *oldp) {
+void diff(process_status *newp, process_status *oldp) {
   while (newp) {
     if (!oldp || newp->pid < oldp->pid) {
 /*       printf("%d %s was started\n", newp->pid, newp->comm); */

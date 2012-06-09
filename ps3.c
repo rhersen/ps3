@@ -58,9 +58,9 @@ float suspended[] = {
     9
 };
 
-struct process_status *ps, *oldps;
+process_status *ps, *oldps;
 
-static void set_material(struct process_status *p) {
+static void set_material(process_status *p) {
   float *m = transparent;
 
   if (p->state == 'S') {
@@ -246,13 +246,14 @@ int main(int argc, char *argv[]) {
 
   glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 
+  try {
   oldps = read_processes_status();
   diff(oldps, 0);		/* initializes textures */
 
   delay = 1000 / fps - 9;
 
   while (1) {
-    struct process_status *p;
+    process_status *p;
     int i = gridx;
     SDL_Event event;
 
@@ -540,5 +541,9 @@ int main(int argc, char *argv[]) {
     if (delay > 0) {
       SDL_Delay(delay);
     }
+  }
+  } catch (const char* message) {
+    fprintf(stderr, "%s\n", message);
+    exit(1);
   }
 }

@@ -59,7 +59,7 @@ struct pngtx *read_png(const char *pngfile) {
     * png_get_channels(png_ptr, info_ptr)
     / 8;
 
-  r->data = malloc(r->txw
+  r->data = (char*) malloc(r->txw
 		   * r->bytes_per_pixel
 		   * r->txh);
 
@@ -110,7 +110,7 @@ GLuint *read_font(void) {
       tx->bytes_per_pixel = 4;
       tx->txw = 4;
       tx->txh = 4;
-      tx->data = malloc(tx->txw * tx->bytes_per_pixel * tx->txh);
+      tx->data = (char*) malloc(tx->txw * tx->bytes_per_pixel * tx->txh);
       memcpy(tx->data, pixel_data, tx->txw * tx->bytes_per_pixel * tx->txh);
     }
 

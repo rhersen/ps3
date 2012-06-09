@@ -3,7 +3,8 @@
 extern int process_count;
 
 struct process_status {
-  struct process_status *next_process;
+  process_status(FILE*);
+  process_status *next_process;
   int pid, ppid;
   char comm[18];
   char state;
@@ -68,6 +69,6 @@ struct process_status {
     processor;      /* current (or most recent?) CPU */
 };
 
-struct process_status *read_processes_status(void);
-void free_processes_status(struct process_status *);
-void diff(struct process_status *newp, struct process_status *oldp);
+process_status *read_processes_status(void);
+void free_processes_status(process_status *);
+void diff(process_status *newp, process_status *oldp);

@@ -6,7 +6,7 @@ struct pngtx {
   GLfloat rotate;
   int row, col;
   int bytes_per_pixel;
-  void *data;
+  char *data;
 };
 
 void setTexture(struct pngtx *tx);
