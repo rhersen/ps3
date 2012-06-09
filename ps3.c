@@ -4,10 +4,14 @@
 #include <SDL.h>
 #include <SDL_mouse.h>
 
+#include <vector>
+
 #include <getopt.h>
 
 #include "png_textures.h"
 #include "process_status.h"
+
+using namespace std;
 
 float sleeping[] = {
     153 / 510.0, 153 / 510.0, 255 / 510.0, 1.000000,
@@ -58,7 +62,7 @@ float suspended[] = {
     9
 };
 
-process_status *ps, *oldps;
+vector<process_status> ps, oldps;
 
 static void set_material(process_status *p) {
   float *m = transparent;
@@ -248,12 +252,12 @@ int main(int argc, char *argv[]) {
 
   try {
   oldps = read_processes_status();
-  diff(oldps, 0);		/* initializes textures */
+  vector<process_status> empty;
+  diff(oldps, empty);		/* initializes textures */
 
   delay = 1000 / fps - 9;
 
   while (1) {
-    process_status *p;
     int i = gridx;
     SDL_Event event;
 
@@ -261,10 +265,10 @@ int main(int argc, char *argv[]) {
       jiffycount = fps / ups;
       ps = read_processes_status();
       diff(ps, oldps);
-      free_processes_status(oldps);
       oldps = ps;
     }
 
+    long process_count = ps.size();
     if (gridx * gridz < process_count
 	|| (gridx - 1) * gridz > process_count) {
       gridx = ceil(sqrt(process_count));
@@ -297,7 +301,7 @@ int main(int argc, char *argv[]) {
 
     i = gridx;
 
-    for (p = ps; p; p = p->next_process) {
+    for (process_status &p: ps) {
       if (i--) {
 	glTranslatef(2, 0, 0);
       } else {
@@ -305,30 +309,30 @@ int main(int argc, char *argv[]) {
 	glTranslatef(2 * (1 - gridx), 0, 2);
       }
 
-      set_material(p);
+      set_material(&p);
 
       {
-	int namelen = strlen(p->comm);
+	int namelen = strlen(p.comm);
 	char pid[6];
 	int pidlen;
-	GLfloat thickness = 0.5 + 1.0 * p->cpu / 100;
+	GLfloat thickness = 0.5 + 1.0 * p.cpu / 100;
 	GLfloat xl = -thickness;
 	GLfloat xr = thickness;
 	GLfloat zf = thickness;
 	GLfloat zb = -thickness;
-	GLfloat yt = p->rss / rss_scale;
+	GLfloat yt = p.rss / rss_scale;
 	int vertical = yt > 2 * thickness;
 	GLfloat minh = 4 * thickness / namelen;
 	GLfloat yb = yt < minh ? yt - minh : 0;
 
-	sprintf(pid, "%d", p->pid);
+	sprintf(pid, "%d", p.pid);
 	pidlen = strlen(pid);
 
 	{
 	  int i;
 
 	  for (i = 0; i < namelen; i++) {
-	    glBindTexture(GL_TEXTURE_2D, font[p->comm[i]]);
+	    glBindTexture(GL_TEXTURE_2D, font[p.comm[i]]);
 	    glBegin(GL_QUADS);
 	    glNormal3f(0, 0, 1);
 

@@ -4,10 +4,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <vector>
+
 #include "ps3.h"
 #include "process_status.h"
 
-int process_count;
+using namespace std;
 
 static void remove_parens(char *s) {
   if (s[0] == '(') {
@@ -54,13 +56,10 @@ next_process(), cpu(), cpuhist(), histidx()
     remove_parens(comm);
 }
 
-process_status *read_processes_status(void) {
-  process_status *r = 0;
-  process_status *p = 0;
+vector<process_status> read_processes_status(void) {
+  vector<process_status> r;
   DIR *proc = opendir("/proc");
   struct dirent *psdir;
-
-  process_count = 0;
 
   while (psdir = readdir(proc)) {
     FILE *statfile = 0;
@@ -73,18 +72,8 @@ process_status *read_processes_status(void) {
     }
 
     if (statfile) {
-      process_status *newp = new process_status(statfile);
-
-      process_count++;
-
-      if (!r) {
-	r = newp;
-      } else {
-	p->next_process = newp;
-      }
-
-      p = newp;
-
+      process_status newp(statfile);
+      r.push_back(newp);
       fclose(statfile);
     }
   }
@@ -94,24 +83,16 @@ process_status *read_processes_status(void) {
   return r;
 }
 
-void free_processes_status(process_status *thiz) {
-  while (thiz) {
-    process_status *next = thiz->next_process;
-    free(thiz);
-    thiz = next;
-  }
-}
-
-void diff(process_status *newp, process_status *oldp) {
-  while (newp) {
-    if (!oldp || newp->pid < oldp->pid) {
-/*       printf("%d %s was started\n", newp->pid, newp->comm); */
+void diff(vector<process_status> newps, vector<process_status> oldps) {
+  vector<process_status>::iterator newp = newps.begin();
+  vector<process_status>::iterator oldp = oldps.begin();
+  while (newp != newps.end()) {
+    if (oldps.empty() || oldp != oldps.end() || newp->pid < oldp->pid) {
       newp->cpuhist[newp->histidx] = newp->utime + newp->stime;
       newp->cpu += newp->cpuhist[newp->histidx];
-      newp = newp->next_process;
+      newp++;
     } else if (newp->pid > oldp->pid) {
-/*       printf("%d %s died\n", oldp->pid, oldp->comm); */
-      oldp = oldp->next_process;
+      oldp++;
     } else {
       int i;
 
@@ -123,16 +104,8 @@ void diff(process_status *newp, process_status *oldp) {
       newp->cpuhist[oldp->histidx] = newp->utime + newp->stime - oldp->utime - oldp->stime;
       newp->histidx = (oldp->histidx + 1) % ups;   
 
-/*       if (strcmp(newp->comm, "gltop") == 0 && newp->cpuhist[oldp->histidx]) { */
-/* 	printf("%d\n", newp->cpuhist[oldp->histidx]); */
-/*       } */
-
-      newp = newp->next_process;
-      oldp = oldp->next_process;
+      newp++;
+      oldp++;
     }
   }
-
-/*   if (oldp) { */
-/*     printf("%d %s died\n", oldp->pid, oldp->comm); */
-/*   } */
 }
