@@ -56,7 +56,7 @@ next_process(), cpu(), cpuhist(), histidx()
     remove_parens(comm);
 }
 
-vector<process_status*> read_processes_status(void) {
+vector<process_status*> read_processes_status() {
   vector<process_status*> r;
   DIR *proc = opendir("/proc");
   struct dirent *psdir;
@@ -85,8 +85,8 @@ vector<process_status*> read_processes_status(void) {
   return r;
 }
 
-void free_processes_status(vector<process_status*> thiz) {
-  for (auto it = thiz.begin(); it != thiz.end(); it++) {
+void free_processes_status(vector<process_status*> processes) {
+  for (auto it = processes.begin(); it != processes.end(); it++) {
     free(*it);
   }
 }
@@ -107,8 +107,8 @@ void diff(vector<process_status*> newps, vector<process_status*> oldps) {
       int i;
 
       for (i = 0; i < ups; i++) {
-	newp->cpuhist[i] = oldp->cpuhist[i];
-	newp->cpu += oldp->cpuhist[i];
+        newp->cpuhist[i] = oldp->cpuhist[i];
+        newp->cpu += oldp->cpuhist[i];
       }
 
       newp->cpuhist[oldp->histidx] = newp->utime + newp->stime - oldp->utime - oldp->stime;

@@ -6,7 +6,7 @@
 
 #include "png_textures.h"
 
-static struct pngtx *new_pngtx(void) {
+static struct pngtx *new_pngtx() {
   struct pngtx empty = { 0, 1, 1 };
   struct pngtx *r = (pngtx *) malloc(sizeof(struct pngtx));
   *r = empty;
@@ -60,13 +60,13 @@ struct pngtx *read_png(const char *pngfile) {
     / 8;
 
   r->data = (char*) malloc(r->txw
-		   * r->bytes_per_pixel
-		   * r->txh);
+                   * r->bytes_per_pixel
+                   * r->txh);
 
   for (i = 0; i < png_get_image_height(png_ptr, info_ptr); i++) {
     memcpy(r->data + i * r->txw * r->bytes_per_pixel,
-	   row_pointers[i],
-	   png_get_rowbytes(png_ptr, info_ptr));
+           row_pointers[i],
+           png_get_rowbytes(png_ptr, info_ptr));
   }
 
   png_destroy_read_struct(&png_ptr, &info_ptr, png_infopp_NULL);
@@ -75,11 +75,11 @@ struct pngtx *read_png(const char *pngfile) {
   return r;
 }
 
-static void set_min_filter(void) {
+static void set_min_filter() {
 #ifdef GL_GENERATE_MIPMAP_SGIS
     if (strstr((const char*) glGetString(GL_EXTENSIONS), "GL_SGIS_generate_mipmap")) {
     glTexParameteri(GL_TEXTURE_2D,
-		    GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+                    GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
     glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
   } else {
@@ -90,7 +90,7 @@ static void set_min_filter(void) {
 #endif
 }
 
-GLuint *read_font(void) {
+GLuint *read_font() {
   unsigned char i;
   struct pngtx *tx;
   GLuint *r = (GLuint*) malloc('z' * sizeof(GLuint));
@@ -103,8 +103,8 @@ GLuint *read_font(void) {
 
     if (!tx) {
       unsigned char pixel_data[] =
-	"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\377\0\0\0\377\0\0\0\0"
-	"\0\0\0\0\0\0\0\377\0\0\0\377\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
+        "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\377\0\0\0\377\0\0\0\0"
+        "\0\0\0\0\0\0\0\377\0\0\0\377\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
 
       tx = new_pngtx();
       tx->bytes_per_pixel = 4;
@@ -123,11 +123,11 @@ GLuint *read_font(void) {
     set_min_filter();
 
     glTexImage2D(GL_TEXTURE_2D, 0,
-		 tx->bytes_per_pixel == 4 ?
-		 GL_RGBA : GL_RGB,
-		 tx->txw, tx->txh, 0,
-		 tx->bytes_per_pixel == 4 ? GL_RGBA : GL_RGB,
-		 GL_UNSIGNED_BYTE, tx->data);
+                 tx->bytes_per_pixel == 4 ?
+                 GL_RGBA : GL_RGB,
+                 tx->txw, tx->txh, 0,
+                 tx->bytes_per_pixel == 4 ? GL_RGBA : GL_RGB,
+                 GL_UNSIGNED_BYTE, tx->data);
 
     free(tx->data);
     free(tx);

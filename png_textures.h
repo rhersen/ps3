@@ -11,5 +11,5 @@ struct pngtx {
 
 void setTexture(struct pngtx *tx);
 struct pngtx *read_png(const char *pngfile);
-GLuint *read_font(void);
+GLuint *read_font();
 

@@ -90,7 +90,7 @@ static void set_material(process_status *p) {
   glMaterialf(GL_FRONT, GL_SHININESS, m[12]);
 }
 
-static void setupLights(void) {
+static void setupLights() {
   GLfloat light = 0.2;
   GLfloat pos0[4] = {40, 40, 0, 1};
   GLfloat pos1[4] = {-40, 40, 0, 1};
@@ -189,14 +189,14 @@ int main(int argc, char *argv[]) {
   int c;
 
   while ((c = getopt_long(argc, argv, "hf:u:", long_options, &option_index))
-	 != -1) {
+         != -1) {
     switch (c) {
     case 'h':
       printf("Available options:\n\n"
-	     "-f\t--frame-rate\tFrame rate in frames per second.\n"
-	     "\t\t\tRecommended values are 100, 50 (default), 33, 25, 20...\n\n"
-	     "-u\t--update-rate\tData update frequency.\n"
-	     "\t\t\tDefault is 25.\n");
+             "-f\t--frame-rate\tFrame rate in frames per second.\n"
+             "\t\t\tRecommended values are 100, 50 (default), 33, 25, 20...\n\n"
+             "-u\t--update-rate\tData update frequency.\n"
+             "\t\t\tDefault is 25.\n");
 
     return 0;
     case 'f':
@@ -212,13 +212,13 @@ int main(int argc, char *argv[]) {
   }
 
   printf("Bindings:\n"
-	 "mouse 3 drag\t\t\tadjust camera position\n"
-	 "mouse 1+3 drag vertically\tzoom\n"
-	 "mouse wheel\t\t\tzoom\n"
-	 "mouse 1 drag vertically\t\tscale height\n"
-	 "mouse 1 drag horizontally\tadjust spin speed\n"
-	 "F1--F6\t\t\t\tpredefined cameras\n"
-	 "Esc, Q\t\t\t\tquit\n");
+         "mouse 3 drag\t\t\tadjust camera position\n"
+         "mouse 1+3 drag vertically\tzoom\n"
+         "mouse wheel\t\t\tzoom\n"
+         "mouse 1 drag vertically\t\tscale height\n"
+         "mouse 1 drag horizontally\tadjust spin speed\n"
+         "F1--F6\t\t\t\tpredefined cameras\n"
+         "Esc, Q\t\t\t\tquit\n");
 
   if (SDL_Init(SDL_INIT_VIDEO) < 0
        || !SDL_SetVideoMode(640, 480, 0, SDL_OPENGL | SDL_RESIZABLE)) {
@@ -233,14 +233,14 @@ int main(int argc, char *argv[]) {
   before = SDL_GetTicks();
 
   glClearColor(0, 0, 0, 0);
-  glClearDepth(1.0);		/* Enables Clearing Of The Depth Buffer */
-  glDepthFunc(GL_LESS);		/* The Type Of Depth Test To Do */
+  glClearDepth(1.0);            /* Enables Clearing Of The Depth Buffer */
+  glDepthFunc(GL_LESS);         /* The Type Of Depth Test To Do */
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glEnable(GL_DEPTH_TEST);	/* Enables Depth Testing */
+  glEnable(GL_DEPTH_TEST);      /* Enables Depth Testing */
   glEnable(GL_CULL_FACE);
   glEnable(GL_TEXTURE_2D);
-  glShadeModel(GL_SMOOTH);	/* Enables Smooth Color Shading */
+  glShadeModel(GL_SMOOTH);      /* Enables Smooth Color Shading */
   resizeWindow(640, 480);
   setupLights();
 
@@ -267,12 +267,12 @@ int main(int argc, char *argv[]) {
 
     long process_count = ps.size();
     if (gridx * gridz < process_count
-	|| (gridx - 1) * gridz > process_count) {
+        || (gridx - 1) * gridz > process_count) {
       gridx = ceil(sqrt(process_count));
       gridz = floor(sqrt(process_count));
 
       if (gridx * gridz < process_count) {
-	gridz++;
+        gridz++;
       }
     }
 
@@ -301,152 +301,152 @@ int main(int argc, char *argv[]) {
     for (auto it = ps.begin(); it != ps.end(); it++) {
       auto p = *it;
       if (i--) {
-	glTranslatef(2, 0, 0);
+        glTranslatef(2, 0, 0);
       } else {
-	i = gridx - 1;
-	glTranslatef(2 * (1 - gridx), 0, 2);
+        i = gridx - 1;
+        glTranslatef(2 * (1 - gridx), 0, 2);
       }
 
       set_material(p);
 
       {
-	int namelen = strlen(p->comm);
-	char pid[6];
-	int pidlen;
-	GLfloat thickness = 0.5 + 1.0 * p->cpu / 100;
-	GLfloat xl = -thickness;
-	GLfloat xr = thickness;
-	GLfloat zf = thickness;
-	GLfloat zb = -thickness;
-	GLfloat yt = p->rss / rss_scale;
-	int vertical = yt > 2 * thickness;
-	GLfloat minh = 4 * thickness / namelen;
-	GLfloat yb = yt < minh ? yt - minh : 0;
+        int namelen = strlen(p->comm);
+        char pid[6];
+        int pidlen;
+        GLfloat thickness = 0.5 + 1.0 * p->cpu / 100;
+        GLfloat xl = -thickness;
+        GLfloat xr = thickness;
+        GLfloat zf = thickness;
+        GLfloat zb = -thickness;
+        GLfloat yt = p->rss / rss_scale;
+        int vertical = yt > 2 * thickness;
+        GLfloat minh = 4 * thickness / namelen;
+        GLfloat yb = yt < minh ? yt - minh : 0;
 
-	sprintf(pid, "%d", p->pid);
-	pidlen = strlen(pid);
+        sprintf(pid, "%d", p->pid);
+        pidlen = strlen(pid);
 
-	{
-	  int i;
+        {
+          int i;
 
-	  for (i = 0; i < namelen; i++) {
-	    glBindTexture(GL_TEXTURE_2D, font[p->comm[i]]);
-	    glBegin(GL_QUADS);
-	    glNormal3f(0, 0, 1);
+          for (i = 0; i < namelen; i++) {
+            glBindTexture(GL_TEXTURE_2D, font[p->comm[i]]);
+            glBegin(GL_QUADS);
+            glNormal3f(0, 0, 1);
 
-	    if (vertical) {
-	      glTexCoord2f(1, 0);
-	      glVertex3f(xl, yb + yt / namelen * (i + 1), zf);
-	      glTexCoord2f(0, 0);
-	      glVertex3f(xl, yb + yt / namelen * i, zf);
-	      glTexCoord2f(0, 1);
-	      glVertex3f(xr, yb + yt / namelen * i, zf);
-	      glTexCoord2f(1, 1);
-	      glVertex3f(xr, yb + yt / namelen * (i + 1), zf);
-	    } else {
-	      glTexCoord2f(1, 0);
-	      glVertex3f(xl + (xr - xl) / namelen * (i + 1), yt, zf);
-	      glTexCoord2f(0, 0);
-	      glVertex3f(xl + (xr - xl) / namelen * i, yt, zf);
-	      glTexCoord2f(0, (yt - yb) / minh);
-	      glVertex3f(xl + (xr - xl) / namelen * i, yb, zf);
-	      glTexCoord2f(1, (yt - yb) / minh);
-	      glVertex3f(xl + (xr - xl) / namelen * (i + 1), yb, zf);
-	    }
+            if (vertical) {
+              glTexCoord2f(1, 0);
+              glVertex3f(xl, yb + yt / namelen * (i + 1), zf);
+              glTexCoord2f(0, 0);
+              glVertex3f(xl, yb + yt / namelen * i, zf);
+              glTexCoord2f(0, 1);
+              glVertex3f(xr, yb + yt / namelen * i, zf);
+              glTexCoord2f(1, 1);
+              glVertex3f(xr, yb + yt / namelen * (i + 1), zf);
+            } else {
+              glTexCoord2f(1, 0);
+              glVertex3f(xl + (xr - xl) / namelen * (i + 1), yt, zf);
+              glTexCoord2f(0, 0);
+              glVertex3f(xl + (xr - xl) / namelen * i, yt, zf);
+              glTexCoord2f(0, (yt - yb) / minh);
+              glVertex3f(xl + (xr - xl) / namelen * i, yb, zf);
+              glTexCoord2f(1, (yt - yb) / minh);
+              glVertex3f(xl + (xr - xl) / namelen * (i + 1), yb, zf);
+            }
 
-	    glNormal3f(0, 0, -1);
-	    if (vertical) {
-	      glTexCoord2f(1, 0);
-	      glVertex3f(xr, yb + yt / namelen * (i + 1), zb);
-	      glTexCoord2f(0, 0);
-	      glVertex3f(xr, yb + yt / namelen * i, zb);
-	      glTexCoord2f(0, 1);
-	      glVertex3f(xl, yb + yt / namelen * i, zb);
-	      glTexCoord2f(1, 1);
-	      glVertex3f(xl, yb + yt / namelen * (i + 1), zb);
-	    } else {
-	      glTexCoord2f(1, 0);
-	      glVertex3f(xr + (xl - xr) / namelen * (i + 1), yt, zb);
-	      glTexCoord2f(0, 0);
-	      glVertex3f(xr + (xl - xr) / namelen * i, yt, zb);
-	      glTexCoord2f(0, (yt - yb) / minh);
-	      glVertex3f(xr + (xl - xr) / namelen * i, yb, zb);
-	      glTexCoord2f(1, (yt - yb) / minh);
-	      glVertex3f(xr + (xl - xr) / namelen * (i + 1), yb, zb);
-	    }
+            glNormal3f(0, 0, -1);
+            if (vertical) {
+              glTexCoord2f(1, 0);
+              glVertex3f(xr, yb + yt / namelen * (i + 1), zb);
+              glTexCoord2f(0, 0);
+              glVertex3f(xr, yb + yt / namelen * i, zb);
+              glTexCoord2f(0, 1);
+              glVertex3f(xl, yb + yt / namelen * i, zb);
+              glTexCoord2f(1, 1);
+              glVertex3f(xl, yb + yt / namelen * (i + 1), zb);
+            } else {
+              glTexCoord2f(1, 0);
+              glVertex3f(xr + (xl - xr) / namelen * (i + 1), yt, zb);
+              glTexCoord2f(0, 0);
+              glVertex3f(xr + (xl - xr) / namelen * i, yt, zb);
+              glTexCoord2f(0, (yt - yb) / minh);
+              glVertex3f(xr + (xl - xr) / namelen * i, yb, zb);
+              glTexCoord2f(1, (yt - yb) / minh);
+              glVertex3f(xr + (xl - xr) / namelen * (i + 1), yb, zb);
+            }
 
-	    glEnd();
-	  }
+            glEnd();
+          }
 
-	  for (i = 0; i < pidlen; i++) {
-	    glBindTexture(GL_TEXTURE_2D, font[pid[i]]);
-	    glBegin(GL_QUADS);
-	    glNormal3f(1, 0, 0);
+          for (i = 0; i < pidlen; i++) {
+            glBindTexture(GL_TEXTURE_2D, font[pid[i]]);
+            glBegin(GL_QUADS);
+            glNormal3f(1, 0, 0);
 
-	    if (vertical) {
-	      glTexCoord2f(1, 0);
-	      glVertex3f(xr, yb + yt * (i + 1) / pidlen, zf);
-	      glTexCoord2f(0, 0);
-	      glVertex3f(xr, yb + yt * i / pidlen, zf);
-	      glTexCoord2f(0, 1);
-	      glVertex3f(xr, yb + yt * i / pidlen, zb);
-	      glTexCoord2f(1, 1);
-	      glVertex3f(xr, yb + yt * (i + 1) / pidlen, zb);
-	    } else {
-	      glTexCoord2f(1, 0);
-	      glVertex3f(xr, yt, zf + (zb - zf) / pidlen * (i + 1));
-	      glTexCoord2f(0, 0);
-	      glVertex3f(xr, yt, zf + (zb - zf) / pidlen * i);
-	      glTexCoord2f(0, 1);
-	      glVertex3f(xr, yb, zf + (zb - zf) / pidlen * i);
-	      glTexCoord2f(1, 1);
-	      glVertex3f(xr, yb, zf + (zb - zf) / pidlen * (i + 1));
-	    }
+            if (vertical) {
+              glTexCoord2f(1, 0);
+              glVertex3f(xr, yb + yt * (i + 1) / pidlen, zf);
+              glTexCoord2f(0, 0);
+              glVertex3f(xr, yb + yt * i / pidlen, zf);
+              glTexCoord2f(0, 1);
+              glVertex3f(xr, yb + yt * i / pidlen, zb);
+              glTexCoord2f(1, 1);
+              glVertex3f(xr, yb + yt * (i + 1) / pidlen, zb);
+            } else {
+              glTexCoord2f(1, 0);
+              glVertex3f(xr, yt, zf + (zb - zf) / pidlen * (i + 1));
+              glTexCoord2f(0, 0);
+              glVertex3f(xr, yt, zf + (zb - zf) / pidlen * i);
+              glTexCoord2f(0, 1);
+              glVertex3f(xr, yb, zf + (zb - zf) / pidlen * i);
+              glTexCoord2f(1, 1);
+              glVertex3f(xr, yb, zf + (zb - zf) / pidlen * (i + 1));
+            }
 
-	    glNormal3f(-1, 0, 0);
+            glNormal3f(-1, 0, 0);
 
-	    if (vertical) {
-	      glTexCoord2f(1, 0);
-	      glVertex3f(xl, yb + yt * (i + 1) / pidlen, zb);
-	      glTexCoord2f(0, 0);
-	      glVertex3f(xl, yb + yt * i / pidlen, zb);
-	      glTexCoord2f(0, 1);
-	      glVertex3f(xl, yb + yt * i / pidlen, zf);
-	      glTexCoord2f(1, 1);
-	      glVertex3f(xl, yb + yt * (i + 1) / pidlen, zf);
-	    } else {
-	      glTexCoord2f(1, 0);
-	      glVertex3f(xl, yt, zb + (zf - zb) / pidlen * (i + 1));
-	      glTexCoord2f(0, 0);
-	      glVertex3f(xl, yt, zb + (zf - zb) / pidlen * i);
-	      glTexCoord2f(0, 1);
-	      glVertex3f(xl, yb, zb + (zf - zb) / pidlen * i);
-	      glTexCoord2f(1, 1);
-	      glVertex3f(xl, yb, zb + (zf - zb) / pidlen * (i + 1));
-	    }
+            if (vertical) {
+              glTexCoord2f(1, 0);
+              glVertex3f(xl, yb + yt * (i + 1) / pidlen, zb);
+              glTexCoord2f(0, 0);
+              glVertex3f(xl, yb + yt * i / pidlen, zb);
+              glTexCoord2f(0, 1);
+              glVertex3f(xl, yb + yt * i / pidlen, zf);
+              glTexCoord2f(1, 1);
+              glVertex3f(xl, yb + yt * (i + 1) / pidlen, zf);
+            } else {
+              glTexCoord2f(1, 0);
+              glVertex3f(xl, yt, zb + (zf - zb) / pidlen * (i + 1));
+              glTexCoord2f(0, 0);
+              glVertex3f(xl, yt, zb + (zf - zb) / pidlen * i);
+              glTexCoord2f(0, 1);
+              glVertex3f(xl, yb, zb + (zf - zb) / pidlen * i);
+              glTexCoord2f(1, 1);
+              glVertex3f(xl, yb, zb + (zf - zb) / pidlen * (i + 1));
+            }
 
-	    glNormal3f(0, 1, 0);
-	    glTexCoord2f(0, 0);
-	    glVertex3f(xr - i * 2 * thickness / pidlen, yt, (zf + zb) / 2);
-	    glTexCoord2f(0, 1);
-	    glVertex3f(xr - i * 2 * thickness / pidlen, yt, zb);
-	    glTexCoord2f(1, 1);
-	    glVertex3f(xr - (i + 1) * 2 * thickness / pidlen, yt, zb);
-	    glTexCoord2f(1, 0);
-	    glVertex3f(xr - (i + 1) * 2 * thickness / pidlen, yt, (zf + zb) / 2);
+            glNormal3f(0, 1, 0);
+            glTexCoord2f(0, 0);
+            glVertex3f(xr - i * 2 * thickness / pidlen, yt, (zf + zb) / 2);
+            glTexCoord2f(0, 1);
+            glVertex3f(xr - i * 2 * thickness / pidlen, yt, zb);
+            glTexCoord2f(1, 1);
+            glVertex3f(xr - (i + 1) * 2 * thickness / pidlen, yt, zb);
+            glTexCoord2f(1, 0);
+            glVertex3f(xr - (i + 1) * 2 * thickness / pidlen, yt, (zf + zb) / 2);
 
-	    glTexCoord2f(0, 0);
-	    glVertex3f(xl + i * 2 * thickness / pidlen, yt, (zf + zb) / 2);
-	    glTexCoord2f(0, 1);
-	    glVertex3f(xl + i * 2 * thickness / pidlen, yt, zf);
-	    glTexCoord2f(1, 1);
-	    glVertex3f(xl + (i + 1) * 2 * thickness / pidlen, yt, zf);
-	    glTexCoord2f(1, 0);
-	    glVertex3f(xl + (i + 1) * 2 * thickness / pidlen, yt, (zf + zb) / 2);
+            glTexCoord2f(0, 0);
+            glVertex3f(xl + i * 2 * thickness / pidlen, yt, (zf + zb) / 2);
+            glTexCoord2f(0, 1);
+            glVertex3f(xl + i * 2 * thickness / pidlen, yt, zf);
+            glTexCoord2f(1, 1);
+            glVertex3f(xl + (i + 1) * 2 * thickness / pidlen, yt, zf);
+            glTexCoord2f(1, 0);
+            glVertex3f(xl + (i + 1) * 2 * thickness / pidlen, yt, (zf + zb) / 2);
 
-	    glEnd();
-	  }
-	}
+            glEnd();
+          }
+        }
       }
     }
 
@@ -477,59 +477,59 @@ int main(int argc, char *argv[]) {
     while (SDL_PollEvent(&event)) {
       switch(event.type) {
       case SDL_VIDEORESIZE:
-	if (!SDL_SetVideoMode(event.resize.w, event.resize.h,
-			      0, SDL_OPENGL | SDL_RESIZABLE)) {
-	  return 1;
-	}
+        if (!SDL_SetVideoMode(event.resize.w, event.resize.h,
+                              0, SDL_OPENGL | SDL_RESIZABLE)) {
+          return 1;
+        }
 
-	resizeWindow(event.resize.w, event.resize.h);
-	break;
+        resizeWindow(event.resize.w, event.resize.h);
+        break;
       case SDL_KEYDOWN:
-	if (event.key.keysym.sym == SDLK_ESCAPE) {
-	  SDL_Quit();
-	  return 0;
-	} else if (event.key.keysym.sym == SDLK_q) {
-	  SDL_Quit();
-	  return 0;
-	} else if (event.key.keysym.sym == SDLK_F1) {
-	  move_camera(camera_sw);
-	} else if (event.key.keysym.sym == SDLK_F2) {
-	  move_camera(camera_nw);
-	} else if (event.key.keysym.sym == SDLK_F3) {
-	  move_camera(camera_tilt);
-	} else if (event.key.keysym.sym == SDLK_F4) {
-	  move_camera(camera_top);
-	} else if (event.key.keysym.sym == SDLK_F5) {
-	  move_camera(camera_s);
-	} else if (event.key.keysym.sym == SDLK_F6) {
-	  move_camera(camera_mid);
-	}
+        if (event.key.keysym.sym == SDLK_ESCAPE) {
+          SDL_Quit();
+          return 0;
+        } else if (event.key.keysym.sym == SDLK_q) {
+          SDL_Quit();
+          return 0;
+        } else if (event.key.keysym.sym == SDLK_F1) {
+          move_camera(camera_sw);
+        } else if (event.key.keysym.sym == SDLK_F2) {
+          move_camera(camera_nw);
+        } else if (event.key.keysym.sym == SDLK_F3) {
+          move_camera(camera_tilt);
+        } else if (event.key.keysym.sym == SDLK_F4) {
+          move_camera(camera_top);
+        } else if (event.key.keysym.sym == SDLK_F5) {
+          move_camera(camera_s);
+        } else if (event.key.keysym.sym == SDLK_F6) {
+          move_camera(camera_mid);
+        }
 
-	break;
+        break;
       case SDL_MOUSEBUTTONDOWN:
-	spin_speed = 0;
+        spin_speed = 0;
 
-	if (event.button.button == SDL_BUTTON_WHEELDOWN) {
-	  camera.y *= 1.1;
-	  camera.z *= 1.1;
-	} else if (event.button.button == SDL_BUTTON_WHEELUP) {
-	  camera.y /= 1.1;
-	  camera.z /= 1.1;
-	}
+        if (event.button.button == SDL_BUTTON_WHEELDOWN) {
+          camera.y *= 1.1;
+          camera.z *= 1.1;
+        } else if (event.button.button == SDL_BUTTON_WHEELUP) {
+          camera.y /= 1.1;
+          camera.z /= 1.1;
+        }
 
-	break;
+        break;
       case SDL_MOUSEMOTION:
-	if (event.motion.state == (SDL_BUTTON(1) | SDL_BUTTON(3))) {
-	  camera.z += event.motion.yrel / 16.0;
-	} else if (event.motion.state & SDL_BUTTON(1)) {
-	  spin_speed += event.motion.xrel / 256.0;
-	  rss_scale *= (1 + event.motion.yrel / 256.0);
-	} else if (event.motion.state & SDL_BUTTON(3)) {
-	  camera.roty += event.motion.xrel / 4.0;
-	  camera.rotx += event.motion.yrel / 4.0;
-	}
+        if (event.motion.state == (SDL_BUTTON(1) | SDL_BUTTON(3))) {
+          camera.z += event.motion.yrel / 16.0;
+        } else if (event.motion.state & SDL_BUTTON(1)) {
+          spin_speed += event.motion.xrel / 256.0;
+          rss_scale *= (1 + event.motion.yrel / 256.0);
+        } else if (event.motion.state & SDL_BUTTON(3)) {
+          camera.roty += event.motion.xrel / 4.0;
+          camera.rotx += event.motion.yrel / 4.0;
+        }
 
-	break;
+        break;
       }
     }
 
