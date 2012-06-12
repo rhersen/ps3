@@ -2,8 +2,6 @@
 
 #define RESOLUTION 100
 
-extern int process_count;
-
 struct process_status {
   process_status(FILE*);
   process_status *next_process;

@@ -61,8 +61,6 @@ vector<process_status*> read_processes_status(void) {
   DIR *proc = opendir("/proc");
   struct dirent *psdir;
 
-  process_count = 0;
-
   while (psdir = readdir(proc)) {
     FILE *statfile = 0;
     char statname[32] = "/proc/";

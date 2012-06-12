@@ -265,6 +265,7 @@ int main(int argc, char *argv[]) {
       oldps = ps;
     }
 
+    long process_count = ps.size();
     if (gridx * gridz < process_count
 	|| (gridx - 1) * gridz > process_count) {
       gridx = ceil(sqrt(process_count));
