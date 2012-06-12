@@ -1,3 +1,5 @@
+#include <vector>
+
 #define RESOLUTION 100
 
 extern int process_count;
@@ -69,6 +71,6 @@ struct process_status {
     processor;      /* current (or most recent?) CPU */
 };
 
-process_status *read_processes_status(void);
-void free_processes_status(process_status *);
-void diff(process_status *newp, process_status *oldp);
+std::vector<process_status*> read_processes_status(void);
+void free_processes_status(std::vector<process_status*>);
+void diff(std::vector<process_status*> newp, std::vector<process_status*> oldp);

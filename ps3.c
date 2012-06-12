@@ -9,6 +9,8 @@
 #include "png_textures.h"
 #include "process_status.h"
 
+using namespace std;
+
 float sleeping[] = {
     153 / 510.0, 153 / 510.0, 255 / 510.0, 1.000000,
     153 / 255.0, 153 / 255.0, 255 / 255.0, 1.000000,
@@ -58,7 +60,7 @@ float suspended[] = {
     9
 };
 
-process_status *ps, *oldps;
+vector<process_status*> ps, oldps;
 
 static void set_material(process_status *p) {
   float *m = transparent;
@@ -248,12 +250,10 @@ int main(int argc, char *argv[]) {
 
   try {
   oldps = read_processes_status();
-  diff(oldps, 0);		/* initializes textures */
 
   delay = 1000 / fps - 9;
 
   while (1) {
-    process_status *p;
     int i = gridx;
     SDL_Event event;
 
@@ -297,7 +297,8 @@ int main(int argc, char *argv[]) {
 
     i = gridx;
 
-    for (p = ps; p; p = p->next_process) {
+    for (auto it = ps.begin(); it != ps.end(); it++) {
+      auto p = *it;
       if (i--) {
 	glTranslatef(2, 0, 0);
       } else {
