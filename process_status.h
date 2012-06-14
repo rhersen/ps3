@@ -70,5 +70,3 @@ struct process_status {
 };
 
 std::vector<process_status*> read_processes_status();
-void free_processes_status(std::vector<process_status*>);
-void diff(std::vector<process_status*> newp, std::vector<process_status*> oldp);

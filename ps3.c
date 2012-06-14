@@ -8,6 +8,7 @@
 
 #include "png_textures.h"
 #include "process_status.h"
+#include "processes.h"
 
 using namespace std;
 
@@ -60,7 +61,7 @@ float suspended[] = {
     9
 };
 
-vector<process_status*> ps, oldps;
+processes ps, oldps;
 
 static void set_material(process_status *p) {
   float *m = transparent;
@@ -249,7 +250,7 @@ int main(int argc, char *argv[]) {
   glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 
   try {
-  oldps = read_processes_status();
+  oldps = processes();
 
   delay = 1000 / fps - 9;
 
@@ -259,9 +260,9 @@ int main(int argc, char *argv[]) {
 
     if (--jiffycount <= 0) {
       jiffycount = fps / ups;
-      ps = read_processes_status();
-      diff(ps, oldps);
-      free_processes_status(oldps);
+      ps = processes();
+      ps.diff(oldps, ups);
+      oldps.free_processes_status();
       oldps = ps;
     }
 
