@@ -2,7 +2,9 @@
 
 class processes {
   std::vector<process_status*> ps;
+  void init(const char*);
  public:
+  processes(const char*);
   processes();
   void free_processes_status();
   void diff(processes, int);

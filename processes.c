@@ -11,14 +11,28 @@
 using namespace std;
 
 processes::processes() {
-  DIR *proc = opendir("/proc");
-  struct dirent *psdir;
+  init("/proc");
+}
+
+processes::processes(const char* proc_dir) {
+  init(proc_dir);
+}
+
+void processes::init(const char* proc_dir) {
+  auto proc = opendir(proc_dir);
+  dirent* psdir;
+
+  if (!proc) {
+    return;
+  }
 
   while (psdir = readdir(proc)) {
-    FILE *statfile = 0;
-    char statname[32] = "/proc/";
+    FILE* statfile = 0;
+    char statname[32] = "";
 
     if (isdigit(psdir->d_name[0])) {
+      strcat(statname, proc_dir);
+      strcat(statname, "/");
       strcat(statname, psdir->d_name);
       strcat(statname, "/stat");
       statfile = fopen(statname, "r");
