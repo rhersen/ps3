@@ -10,3 +10,10 @@ BOOST_AUTO_TEST_CASE(nonExistingDirectoryShouldGiveEmptyProcessList)
 
     BOOST_CHECK(!test_object.size());
 }
+
+BOOST_AUTO_TEST_CASE(single)
+{
+    processes test_object("fixtures/single");
+
+    BOOST_CHECK(test_object.size() == 1);
+}
