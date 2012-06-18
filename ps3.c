@@ -63,25 +63,25 @@ float suspended[] = {
 
 processes ps, oldps;
 
-static void set_material(process_status *p) {
+static void set_material(ProcessStatus* p) {
   float *m = transparent;
 
-  if (p->state == 'S') {
+  if (p->getState() == 'S') {
     m = sleeping;
-  } else if (p->state == 'R') {
-    if (p->nice > 0) {
+  } else if (p->getState() == 'R') {
+    if (p->getNice() > 0) {
       m = nice;
     } else {
       m = running;
     }
-  } else if (p->state == 'D') {
+  } else if (p->getState() == 'D') {
     m = disk;
-  } else if (p->state == 'Z') {
+  } else if (p->getState() == 'Z') {
     m = zombie;
-  } else if (p->state == 'T') {
+  } else if (p->getState() == 'T') {
     m = suspended;
   } else {
-    printf("state is %c\n", p->state);
+    printf("state is %c\n", p->getState());
     m = transparent;
   }
 
@@ -311,27 +311,27 @@ int main(int argc, char *argv[]) {
       set_material(p);
 
       {
-        int namelen = strlen(p->comm);
+        int namelen = strlen(p->getComm());
         char pid[6];
         int pidlen;
-        GLfloat thickness = 0.5 + 1.0 * p->cpu / 100;
+        GLfloat thickness = 0.5 + 1.0 * p->getCpu() / 100;
         GLfloat xl = -thickness;
         GLfloat xr = thickness;
         GLfloat zf = thickness;
         GLfloat zb = -thickness;
-        GLfloat yt = p->rss / rss_scale;
+        GLfloat yt = p->getRss() / rss_scale;
         int vertical = yt > 2 * thickness;
         GLfloat minh = 4 * thickness / namelen;
         GLfloat yb = yt < minh ? yt - minh : 0;
 
-        sprintf(pid, "%d", p->pid);
+        sprintf(pid, "%d", p->getPid());
         pidlen = strlen(pid);
 
         {
           int i;
 
           for (i = 0; i < namelen; i++) {
-            glBindTexture(GL_TEXTURE_2D, font[p->comm[i]]);
+            glBindTexture(GL_TEXTURE_2D, font[p->getComm()[i]]);
             glBegin(GL_QUADS);
             glNormal3f(0, 0, 1);
 

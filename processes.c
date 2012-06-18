@@ -59,34 +59,24 @@ void processes::diff(processes oldps, int ups) {
   while (newIt != end()) {
     auto newp = *newIt;
     auto oldp = *oldIt;
-    if (oldIt == oldps.end() || newp->pid < oldp->pid) {
-      newp->cpuhist[newp->histidx] = newp->utime + newp->stime;
-      newp->cpu += newp->cpuhist[newp->histidx];
+    if (oldIt == oldps.end() || newp->getPid() < oldp->getPid()) {
+      newp->createCpuHistory();
       newIt++;
-    } else if (newp->pid > oldp->pid) {
+    } else if (newp->getPid() > oldp->getPid()) {
       oldIt++;
     } else {
-      int i;
-
-      for (i = 0; i < ups; i++) {
-        newp->cpuhist[i] = oldp->cpuhist[i];
-        newp->cpu += oldp->cpuhist[i];
-      }
-
-      newp->cpuhist[oldp->histidx] = newp->utime + newp->stime - oldp->utime - oldp->stime;
-      newp->histidx = (oldp->histidx + 1) % ups;   
-
+      newp->updateCpuHistory(oldp, ups);
       newIt++;
       oldIt++;
     }
   }
 }
 
-vector<process_status*>::iterator processes::begin() {
+vector<ProcessStatus*>::iterator processes::begin() {
   return ps.begin();
 }
 
-vector<process_status*>::iterator processes::end() {
+vector<ProcessStatus*>::iterator processes::end() {
   return ps.end();
 }
 

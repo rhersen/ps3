@@ -2,8 +2,38 @@
 
 #define RESOLUTION 100
 
-struct process_status {
+class ProcessStatus {
+ public:
+  virtual ~ProcessStatus() {};
+  virtual void createCpuHistory() = 0;
+  virtual void updateCpuHistory(ProcessStatus*, int) = 0;
+  virtual int getPid() = 0;
+  virtual unsigned getCpuhist(int) = 0;
+  virtual int getHistidx() = 0;
+  virtual unsigned long long getUtime() = 0;
+  virtual unsigned long long getStime() = 0;
+  virtual char getState() = 0;
+  virtual long getNice() = 0;
+  virtual char* getComm() = 0;
+  virtual unsigned getCpu() = 0;
+  virtual long getRss() = 0;
+};
+
+struct process_status : public ProcessStatus {
+  void createCpuHistory();
+  void updateCpuHistory(ProcessStatus*, int);
+  int getPid();
+  unsigned getCpuhist(int);
+  int getHistidx();
+  unsigned long long getUtime();
+  unsigned long long getStime();
+  char getState();
+  long getNice();
+  char* getComm();
+  unsigned getCpu();
+  long getRss();
   process_status(FILE*);
+  virtual ~process_status() {};
   process_status *next_process;
   int pid, ppid;
   char comm[18];
