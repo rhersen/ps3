@@ -6,14 +6,24 @@
 
 BOOST_AUTO_TEST_CASE(nonExistingDirectoryShouldGiveEmptyProcessList)
 {
-    processes test_object("qwerty");
+    processes target("qwerty");
 
-    BOOST_CHECK(!test_object.size());
+    BOOST_CHECK(!target.size());
 }
 
 BOOST_AUTO_TEST_CASE(single)
 {
-    processes test_object("fixtures/single");
+    processes target("fixtures/single");
 
-    BOOST_CHECK(test_object.size() == 1);
+    BOOST_CHECK(target.size() == 1);
+}
+
+BOOST_AUTO_TEST_CASE(diffEmpty)
+{
+    processes target("fixtures/empty");
+    processes that("fixtures/empty");
+
+    BOOST_CHECK(target.size() == 0);
+    target.diff(that, 1);
+    BOOST_CHECK(target.size() == 0);
 }
