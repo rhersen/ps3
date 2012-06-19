@@ -9,6 +9,7 @@ class processes {
   void free_processes_status();
   void diff(processes, int);
   long size();
+  void push_back(ProcessStatus* p);
   std::vector<ProcessStatus*>::iterator begin();
   std::vector<ProcessStatus*>::iterator end();
 };
