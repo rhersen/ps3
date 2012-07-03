@@ -38,7 +38,6 @@ TEST(process_status, shouldCallCreateCpuHistoryIfOldListIsEmpty) {
     ProcessStatusMock mock;
     target.push_back(&mock);
     EXPECT_CALL(mock, createCpuHistory());
-    /* EXPECT_CALL(mock, getPid()).WillOnce(Return(123)); */
 
     EXPECT_EQ(1, target.size());
     processes that("fixtures/empty");
@@ -48,13 +47,34 @@ TEST(process_status, shouldCallCreateCpuHistoryIfOldListIsEmpty) {
 TEST(process_status, shouldCallUpdateCpuHistoryIfOldListContainsProcess) {
     processes target("fixtures/empty");
     processes that("fixtures/empty");
-    ProcessStatusMock mock1;
-    target.push_back(&mock1);
-    ProcessStatusMock mock2;
-    that.push_back(&mock2);
-    EXPECT_CALL(mock1, updateCpuHistory(_, _));
-    EXPECT_CALL(mock1, getPid()).WillRepeatedly(Return(123));
-    EXPECT_CALL(mock2, getPid()).WillRepeatedly(Return(123));
+    ProcessStatusMock newProcess;
+    target.push_back(&newProcess);
+    ProcessStatusMock oldProcess;
+    that.push_back(&oldProcess);
+    EXPECT_CALL(oldProcess, getPid()).WillRepeatedly(Return(2));
+    EXPECT_CALL(newProcess, updateCpuHistory(_, _));
+    EXPECT_CALL(newProcess, getPid()).WillRepeatedly(Return(2));
+
+    EXPECT_EQ(1, target.size());
+    target.diff(that, 1);
+}
+
+TEST(process_status, shouldCallUpdateCpuHistoryIfOldListDoesNotContainProcess) {
+    processes target("fixtures/empty");
+    processes that("fixtures/empty");
+    ProcessStatusMock newProcess;
+    target.push_back(&newProcess);
+
+    ProcessStatusMock old1;
+    that.push_back(&old1);
+    EXPECT_CALL(old1, getPid()).WillRepeatedly(Return(2));
+
+    ProcessStatusMock old2;
+    that.push_back(&old2);
+    EXPECT_CALL(old2, getPid()).WillRepeatedly(Return(4));
+
+    EXPECT_CALL(newProcess, createCpuHistory());
+    EXPECT_CALL(newProcess, getPid()).WillRepeatedly(Return(3));
 
     EXPECT_EQ(1, target.size());
     target.diff(that, 1);

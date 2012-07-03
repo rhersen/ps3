@@ -53,16 +53,29 @@ void processes::free_processes_status() {
   }
 }
 
+int operator>(ProcessStatus& p1, ProcessStatus& p2) {
+  return p1.getPid() > p2.getPid();
+}
+
+int operator<(ProcessStatus& p1, ProcessStatus& p2) {
+  return p1.getPid() < p2.getPid();
+}
+
 void processes::diff(processes oldps, int ups) {
   auto newIt = begin();
   auto oldIt = oldps.begin();
   while (newIt != end()) {
-    if (oldIt == oldps.end() || (*newIt)->getPid() < (*oldIt)->getPid()) {
-      (*newIt++)->createCpuHistory();
-    } else if ((*newIt)->getPid() > (*oldIt)->getPid()) {
+    auto newp = *newIt;
+    ProcessStatus* oldp;
+    if (oldIt == oldps.end() || *newp < *(oldp = *oldIt)) {
+      newp->createCpuHistory();
+      newIt++;
+    } else if (*newp > *oldp) {
       oldIt++;
     } else {
-      (*newIt++)->updateCpuHistory(*oldIt++, ups);
+      newp->updateCpuHistory(oldp, ups);
+      newIt++;
+      oldIt++;
     }
   }
 }
