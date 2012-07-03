@@ -8,5 +8,5 @@ exe:
 	$(CC) -O2 ps3.c process_status.c processes.c png_textures.c -o ps3 -lGL -lGLU -lpng `sdl-config --cflags --libs`
 
 test:
-	$(CC) -g -fprofile-arcs -ftest-coverage -I$(GMOCK)/gtest/include -I$(GMOCK)/include $(GMOCK)/gtest/src/gtest_main.cc test.c process_status.c processes.c -lpthread libgmock.a -o run_test
+	$(CC) -I$(GMOCK)/gtest/include -I$(GMOCK)/include $(GMOCK)/gtest/src/gtest_main.cc test.c process_status.c processes.c -lpthread libgmock.a -o run_test
 	./run_test
